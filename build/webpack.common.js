@@ -4,21 +4,43 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        app: './src/index.js'
+        app: path.resolve('./src/index.js')
     },
     output: {
         filename: '[name].[hash].js',
         chunkFilename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve('./dist')
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin(['dist'], {
+            root: path.resolve(),       　　　　　　　　　　//根目录
+            verbose: true,        　　　　　　　　　　//开启在控制台输出信息
+            dry: false        　　　　　　　　　　//启用删除文件
+        }),
         new HtmlWebpackPlugin({
-            title: 'Casa'
+            // title: 'Casa',
+            // chunks: ['app'],
+            // entry: {
+            //     key: 'index',
+            //     file: path.resolve(__dirname, '../src/index.js'),
+            // },
+            // filename: 'index.html',
+            template: path.resolve('./public/index.html')
         })
     ],
     module: {
         rules: [
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/react'],
+                        plugins: ['@babel/plugin-proposal-object-rest-spread']
+                    }
+                }
+            },
             {
                 test: /\.css$/,
                 use: [
