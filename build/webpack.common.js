@@ -11,6 +11,14 @@ module.exports = {
         chunkFilename: '[name].bundle.js',
         path: path.resolve('./dist')
     },
+    resolve: {
+        extensions: ['.js', '.jsx', '.json'],
+        alias: {
+            '@': path.resolve('./src'),
+            root: path.resolve('./'),
+            utils: path.resolve('./utils'),
+        },
+    },
     plugins: [
         new CleanWebpackPlugin(['dist'], {
             root: path.resolve(),       　　　　　　　　　　//根目录
@@ -18,13 +26,14 @@ module.exports = {
             dry: false        　　　　　　　　　　//启用删除文件
         }),
         new HtmlWebpackPlugin({
-            // title: 'Casa',
+            title: 'Casa',
             // chunks: ['app'],
             // entry: {
             //     key: 'index',
             //     file: path.resolve(__dirname, '../src/index.js'),
             // },
             // filename: 'index.html',
+            favicon: path.resolve('./public/favicon.ico'),
             template: path.resolve('./public/index.html')
         })
     ],
