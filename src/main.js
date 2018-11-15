@@ -1,8 +1,9 @@
-import 'babel-polyfill'
-import React from 'react'
+import "@babel/polyfill";
+import React, { Fragment } from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-// import App from './components/App'
+// import { Router, Route, Link, IndexRoute, Redirect, browserHistory } from 'react-router'
+import { BrowserRouter, Route, Link, IndexRoute, Switch, HashRouter } from 'react-router-dom'
 import App from './App'
 import configureStore from './configureStore'
 
