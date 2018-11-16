@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Login from 'components/Login/index'
 
-class LoginPage extends Component{
+class LoginPage extends Component {
     render() {
         return (
             <Login />
@@ -10,4 +10,4 @@ class LoginPage extends Component{
     }
 }
 
-export default Login
+export default LoginPage
