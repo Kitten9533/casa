@@ -1,29 +1,36 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
-import { BrowserRouter, Route, Link, IndexRoute, Switch, HashRouter } from 'react-router-dom'
+import { BrowserRouter, Route, Link, IndexRoute, Switch, HashRouter as Router, Redirect } from 'react-router-dom'
+import { TransitionGroup, CSSTransition } from "react-transition-group"
 // pages
 import LoginPage from './containers/LoginPage'
-import Layout from './containers/Layout'
+import Layout from './containers/LayoutPage'
+import PrivateRoute from '@/auth/PrivateRoute'
 
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import theme from '@/theme'
+import { themeOne, themeTwo } from '@/theme'
+import './main.css'
 
 class App extends Component {
     render() {
         return (
-            <MuiThemeProvider theme={theme}>
-                <HashRouter>
+            <Router>
+                <MuiThemeProvider theme={themeTwo}>
                     <Switch>
                         <Route exact path="/" component={Layout} />
-                        <Route path="/index" component={Layout} />
+                        <Route path="/layout" component={Layout} />
                         <Route path="/login" component={LoginPage} />
                     </Switch>
-                </HashRouter>
-            </MuiThemeProvider>
+                </MuiThemeProvider>
+            </Router>
         );
     }
 }
 
 // export default withRouter(connect()(App))
-export default App
+export default connect(state => {
+    return {
+        user: state.user
+    }
+})(App)
