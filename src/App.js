@@ -18,7 +18,11 @@ class App extends Component {
             <Router>
                 <MuiThemeProvider theme={themeTwo}>
                     <Switch>
-                        <Route exact path="/" component={Layout} />
+                        <Route exact path="/" render={
+                            () => (
+                                <Redirect to="/layout" />
+                            )
+                        } />
                         <Route path="/layout" component={Layout} />
                         <Route path="/login" component={LoginPage} />
                     </Switch>

@@ -1,0 +1,17 @@
+.listItemContent {
+    background: #f3f3f3;
+    padding: 15px;
+    position: relative;
+    border-radius: 10px;
+}
+.bubbleLeft::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: -20px;
+    display: block;
+    width: 0;
+    border-width: 10px;
+    border-color: transparent #f3f3f3 transparent transparent;
+    border-style: solid;
+}

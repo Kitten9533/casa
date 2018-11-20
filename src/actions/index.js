@@ -24,3 +24,8 @@ export const VisibilityFilters = {
 export const signIn = () => ({
   type: 'SIGN_IN',
 })
+
+export const setSelectedItem = (selectedItem) => ({
+  type: 'SET_SELECTED_ITEM',
+  selectedItem,
+})

@@ -1,5 +1,9 @@
 const user = (state = {
     userName: 'Abc',
+    avatar: '',
+    friends: [],
+    groups: [],
+    token: '',
     isLogin: true,
 }, action) => {
     switch (action.type) {
