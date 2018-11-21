@@ -98,7 +98,7 @@ class Header extends Component {
     }
 
     render() {
-        const { classes, user: { userName = '' } } = this.props;
+        const { classes, user: { name = '' } } = this.props;
 
         return (
             <AppBar position="fixed" className={classes.appBar}>
@@ -130,7 +130,7 @@ class Header extends Component {
                         classes={{
                             root: classes.typographyRoot
                         }}>
-                        {userName}
+                        {name}
                     </Typography>
                 </Toolbar>
             </AppBar>

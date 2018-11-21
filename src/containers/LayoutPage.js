@@ -6,13 +6,14 @@ import { withStyles } from '@material-ui/core/styles';
 import MsgList from '@/components/MsgList';
 import { Route } from 'react-router-dom';
 import ChatLayout from '@/components/ChatLayout'
-import Header from '@/components/Layout/Header'
+import Header from '@/components/Layout/header'
 
 const drawerWidth = 220;
 
 const styles = theme => ({
     root: {
         display: 'flex',
+        height: '100%',
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -24,10 +25,15 @@ const styles = theme => ({
     },
     drawerPaper: {
         width: drawerWidth,
+        borderColor: '#f6f7f9',
+        background: '#fdfdfd',
     },
     content: {
         flexGrow: 1,
-        padding: theme.spacing.unit * 3,
+        // padding: theme.spacing.unit * 3,
+        display: 'flex',
+        flexDirection: 'column',
+        background: '#fdfdfd',
     },
 });
 

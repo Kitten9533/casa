@@ -1,0 +1,38 @@
+.container{
+    width: 100%;
+    flex: 1;
+    overflow: auto;
+}
+.listItemContent {
+    background: #f3f3f3;
+    padding: 10px;
+    position: relative;
+    border-radius: 10px;
+    // flex: 1;
+    flex: 0.6;
+}
+.bubbleLeft::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: -20px;
+    display: block;
+    width: 0;
+    border-width: 10px;
+    border-color: transparent #f3f3f3 transparent transparent;
+    border-style: solid;
+}
+.bubbleRight{
+    background: #daf4fd;
+}
+.bubbleRight::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: -20px;
+    display: block;
+    width: 0;
+    border-width: 10px;
+    border-color: transparent  transparent transparent #daf4fd;
+    border-style: solid;
+}

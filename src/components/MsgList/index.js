@@ -5,7 +5,25 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'react-router'
+import { withStyles } from '@material-ui/core/styles';
 import { setSelectedItem } from '@/actions'
+
+const textEllipsis = {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+}
+
+const styles = theme => ({
+    textPrimary: {
+        ...textEllipsis,
+        fontSize: '0.875rem',
+    },
+    textSecondary: {
+        ...textEllipsis,
+        fontSize: '0.625rem',
+    }
+})
 
 class MsgList extends Component {
 
@@ -32,7 +50,7 @@ class MsgList extends Component {
     }
 
     render() {
-        const { msgList: { list = {} } } = this.props;
+        const { msgList: { list = {} }, classes } = this.props;
         return (
             <List>
                 {Object.values(list).map((item, index) => (
@@ -41,6 +59,10 @@ class MsgList extends Component {
                         <ListItemText
                             primary={item.from.name}
                             secondary={item.msgList[0] ? item.msgList[0].content : ''}
+                            classes={{
+                                primary: classes.textPrimary,
+                                secondary: classes.textSecondary,
+                            }}
                         />
                     </ListItem>
                 ))}
@@ -53,4 +75,4 @@ export default withRouter(connect(state => {
     return {
         msgList: state.msgList,
     }
-})(MsgList))
+})(withStyles(styles)(MsgList)))
