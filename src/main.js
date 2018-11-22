@@ -32,7 +32,12 @@ socket.on('connect', () => {
   socket.on('disconnect', () => {
     console.log('you have been disconnected');
   });
+  socket.emit('login', {name: 'Kitten', password: '123456'});
 })
+
+socket.on('loginSuccess', (res) => {
+  console.log('login success', res);
+});
 
 
 
