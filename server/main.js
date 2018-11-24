@@ -4,8 +4,11 @@ const mongoose = require('mongoose');
 var config = require('../config/server.conf')
 
 console.log('database:' + config.database)
-mongoose.connect(config.database, { useNewUrlParser: true }, (err) => {
-    if(err){
+mongoose.connect(config.database, {
+    useCreateIndex: true,
+    useNewUrlParser: true
+}, (err) => {
+    if (err) {
         console.error('error in connecting mongodb');
         console.log(err);
         return process.exit(1);

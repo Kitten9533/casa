@@ -4,6 +4,7 @@ const io = require('socket.io')(http);
 const userEvents = require('./routes/user');
 const catchError = require('./middlewares/catchError');
 const log = require('./middlewares/log');
+const call = require('./utils/call');
 
 const socketEvents = require('./middlewares/socketEvents')
 
@@ -11,10 +12,10 @@ const socketEvents = require('./middlewares/socketEvents')
 //     res.send('<h1>Hello world</h1>');
 // });
 
-io.attach(http);
+// io.attach(http);
 
-app.use(log());
-app.use(catchError());
+// app.use(log());
+// io.use(catchError());
 
 var numUsers = 0;
 
@@ -25,21 +26,22 @@ io.on('connection', (socket) => {
     // console.dir(socket);
     console.log('connect');
 
-    // // socket事件绑定
-    // socket.use(socketEvents(
-    //     io,
-    //     socket,
-    //     Object.assign({}, userEvents)
-    // ));
+    socket.on('login', (payload, fn) => {
+        call(userEvents.login, payload, fn, io, socket);
+    })
 
-    socket.on('login', async (payload) => {
-        await userEvents.login(payload, io, socket);
+    socket.on('register', (payload, fn) => {
+        call(userEvents.register, payload, fn, io, socket);
     })
 
     socket.on('disconnect', () => {
         console.log('Got disconnect!');
         var i = allClients.indexOf(socket);
         allClients.splice(i, 1);
+    })
+
+    socket.on('test', function(name, fn){
+        fn(name);
     })
 })
 
