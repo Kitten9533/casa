@@ -14,7 +14,7 @@ mongoose.connect(config.database, {
         return process.exit(1);
     }
     console.log('database connected');
-    app.listen(port, function () {
+    app.listen(port, '0.0.0.0', function () {
         console.log(`listening on *:${port}`);
     });
 })
