@@ -21,8 +21,9 @@ export const VisibilityFilters = {
   SHOW_ACTIVE: 'SHOW_ACTIVE'
 }
 
-export const signIn = () => ({
+export const signIn = (userInfo) => ({
   type: 'SIGN_IN',
+  userInfo
 })
 
 export const setSelectedItem = (selectedItem) => ({

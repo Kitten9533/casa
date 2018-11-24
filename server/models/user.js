@@ -6,7 +6,7 @@ const UserSchema = new Schema({
         type: String,
         trim: true,
         unique: true,
-        match: /^([0-9a-zA-Z]{1,2}|[\u4e00-\u9eff]){1,8}$/,
+        // match: /^([0-9a-zA-Z]{1,2}|[\u4e00-\u9eff]){1,8}$/,
         index: true,
     },
     password: {

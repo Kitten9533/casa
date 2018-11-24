@@ -6,7 +6,6 @@ const catchError = require('./middlewares/catchError');
 const log = require('./middlewares/log');
 const call = require('./utils/call');
 
-const socketEvents = require('./middlewares/socketEvents')
 
 app.get('/', function (req, res) {
     res.send('<h1>Hello world</h1>');
@@ -16,15 +15,14 @@ app.get('/', function (req, res) {
 
 // app.use(log());
 // io.use(catchError());
-
-var numUsers = 0;
-
-var allClients = [];
+io.allClients = []; // 所有连接的客户端， 包括游客和库中的用户
+io.allUser = {};    // 在线的用户，数据库中有账号信息的用户
+io.allUserId = {};  // 在线的用户id
 
 io.on('connection', (socket) => {
-    allClients.push(socket);
-    // console.dir(socket);
-    console.log('connect');
+    io.allClients.push(socket);
+    console.log('socket.user: ' + socket.user);
+    console.log('connect: now online === ' + io.allClients.length);
 
     socket.on('login', (payload, fn) => {
         call(userEvents.login, payload, fn, io, socket);
@@ -35,9 +33,12 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        console.log('Got disconnect!');
-        var i = allClients.indexOf(socket);
-        allClients.splice(i, 1);
+        var i = io.allClients.indexOf(socket);
+        io.allClients.splice(i, 1);
+        delete io.allUser[socket.user];
+        delete io.allUserId[socket.user];
+        console.log('socket.user: ' + socket.user);
+        console.log('Got disconnect!: now online === ' + io.allClients.length);
     })
 
     socket.on('test', function(name, fn){

@@ -10,9 +10,11 @@ const user = (state = {
 }, action) => {
     switch (action.type) {
         case 'SIGN_IN':
+            console.log('signin', action);
             return {
                 ...state,
-                ...{ userName: 'Abc', isLogin: true },
+                ...action.userInfo,
+                ...{ isLogin: true },
             }
         default:
             return state

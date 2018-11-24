@@ -74,54 +74,32 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-class AlertDialogSlide extends React.Component {
-    state = {
-        open: false,
-    };
-
-    handleClickOpen = () => {
-        this.setState({ open: true });
-    };
-
-    handleClose = () => {
-        this.setState({ open: false });
-    };
-
-    render() {
-        return (
-            <div>
-                <Button onClick={this.handleClickOpen}>Slide in alert dialog</Button>
-                <Dialog
-                    open={this.state.open}
-                    TransitionComponent={Transition}
-                    keepMounted
-                    onClose={this.handleClose}
-                    aria-labelledby="alert-dialog-slide-title"
-                    aria-describedby="alert-dialog-slide-description"
-                >
-                    <DialogTitle id="alert-dialog-slide-title">
-                        {"提示"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-slide-description">
-                            用户不存在，点击注册即可跳转到登录页
-                    </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            取消
-                        </Button>
-                        <Button onClick={this.handleClose} color="primary">
-                            去注册页
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
-        );
-    }
-}
-
 class Login extends Component {
+
+    componentDidMount() {
+
+        // TODO mock 
+        const { dispatch } = this.props;
+        emit('login', { name: 'Kitten', password: '123456' }).then((res) => {
+            if (res.success) {
+                dispatch(signIn(res.data));
+                setTimeout(() => {
+                    this.setState({
+                        loading: false,
+                    }, () => {
+                        this.props.history.replace('/');
+                    })
+                }, 300);
+            } else {
+                this.setState({
+                    noticeOpen: true,
+                    loading: false,
+                    noticeContent: res.msg,
+                })
+            }
+        });
+
+    }
 
     state = {
         loading: false,
@@ -155,12 +133,6 @@ class Login extends Component {
             loading: true,
         }, () => {
             this.userAction();
-
-            // console.log(this.nameRefs);
-            // console.log(this.nameRefs.getValue(), this.passwordRefs.getValue());
-            return;
-            
-            this.handleSignInSuccess();
         })
     }
 
@@ -186,7 +158,7 @@ class Login extends Component {
             return;
         }
         const res = await emit(type, { name, password });
-        if(res.success){
+        if (res.success) {
             dispatch(signIn());
             setTimeout(() => {
                 this.setState({
@@ -195,14 +167,14 @@ class Login extends Component {
                     this.props.history.replace('/');
                 })
             }, 300);
-        }else{
+        } else {
             // 登录失败的
-            if(res.code === 5003){ // 账号不存在
+            if (res.code === 5003) { // 账号不存在
                 this.setState({
                     open: true,
                     loading: false,
                 });
-            }else{
+            } else {
                 this.setState({
                     noticeOpen: true,
                     loading: false,
