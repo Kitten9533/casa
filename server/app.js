@@ -8,9 +8,9 @@ const call = require('./utils/call');
 
 const socketEvents = require('./middlewares/socketEvents')
 
-// app.get('/', function (req, res) {
-//     res.send('<h1>Hello world</h1>');
-// });
+app.get('/', function (req, res) {
+    res.send('<h1>Hello world</h1>');
+});
 
 // io.attach(http);
 
