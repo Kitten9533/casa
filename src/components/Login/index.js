@@ -12,8 +12,16 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 import { connect } from 'react-redux';
 import { signIn } from '@/actions';
+import emit from '@/utils/emit';
+import Notice from '@/components/Notice';
 
 const styles = theme => ({
     main: {
@@ -62,23 +70,150 @@ const styles = theme => ({
     },
 });
 
+function Transition(props) {
+    return <Slide direction="up" {...props} />;
+}
+
+class AlertDialogSlide extends React.Component {
+    state = {
+        open: false,
+    };
+
+    handleClickOpen = () => {
+        this.setState({ open: true });
+    };
+
+    handleClose = () => {
+        this.setState({ open: false });
+    };
+
+    render() {
+        return (
+            <div>
+                <Button onClick={this.handleClickOpen}>Slide in alert dialog</Button>
+                <Dialog
+                    open={this.state.open}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">
+                        {"提示"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            用户不存在，点击注册即可跳转到登录页
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            取消
+                        </Button>
+                        <Button onClick={this.handleClose} color="primary">
+                            去注册页
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        );
+    }
+}
 
 class Login extends Component {
 
     state = {
         loading: false,
+        name: '',
+        password: '',
+        open: false,
+        noticeOpen: false,
+        noticeTitle: '',
+        noticeContent: '',
     }
 
-    submit = (e) => {
+    handleClose = () => {
+        this.setState({ open: false });
+    };
+
+    handleNoticeClose = () => {
+        this.setState({
+            noticeOpen: false,
+        })
+    }
+
+    handleChange = name => event => {
+        this.setState({
+            [name]: event.target.value,
+        })
+    }
+
+    handleSubmit = (e) => {
         e.preventDefault();
-        console.log(this.props);
-        const { dispatch } = this.props;
         this.setState({
             loading: true,
         }, () => {
-            dispatch(signIn());
+            this.userAction();
+
+            // console.log(this.nameRefs);
+            // console.log(this.nameRefs.getValue(), this.passwordRefs.getValue());
+            return;
+            
             this.handleSignInSuccess();
         })
+    }
+
+    userAction = async (type = 'login') => {
+        const { name, password } = this.state;
+        const { dispatch } = this.props;
+        if (!name) {
+            console.log('请输入用户名');
+            this.setState({
+                noticeOpen: true,
+                loading: false,
+                noticeContent: '请输入用户名',
+            })
+            return;
+        }
+        if (!password) {
+            console.log('请输入密码');
+            this.setState({
+                noticeOpen: true,
+                loading: false,
+                noticeContent: '请输入密码',
+            })
+            return;
+        }
+        const res = await emit(type, { name, password });
+        if(res.success){
+            dispatch(signIn());
+            setTimeout(() => {
+                this.setState({
+                    loading: false,
+                }, () => {
+                    this.props.history.replace('/');
+                })
+            }, 300);
+        }else{
+            // 登录失败的
+            if(res.code === 5003){ // 账号不存在
+                this.setState({
+                    open: true,
+                    loading: false,
+                });
+            }else{
+                this.setState({
+                    noticeOpen: true,
+                    loading: false,
+                    noticeContent: res.msg,
+                })
+            }
+        }
+    }
+
+    handleRegister = () => {
+        this.userAction('register');
     }
 
     handleSignInSuccess = () => {
@@ -106,12 +241,12 @@ class Login extends Component {
                     </Typography>
                     <form className={classes.form}>
                         <FormControl margin="normal" required fullWidth>
-                            <InputLabel htmlFor="email">Username</InputLabel>
-                            <Input id="email" name="email" autoComplete="email" autoFocus defaultValue="abc" />
+                            <InputLabel htmlFor="name">Username</InputLabel>
+                            <Input id="name" name="name" autoFocus value={this.state.name} onChange={this.handleChange('name')} />
                         </FormControl>
                         <FormControl margin="normal" required fullWidth>
                             <InputLabel htmlFor="password">Password</InputLabel>
-                            <Input name="password" type="password" id="password" autoComplete="current-password" defaultValue="123456" />
+                            <Input name="password" type="password" id="password" value={this.state.password} onChange={this.handleChange('password')} />
                         </FormControl>
                         <Button
                             type="submit"
@@ -120,13 +255,39 @@ class Login extends Component {
                             fullWidth
                             className={classes.submit}
                             disabled={loading}
-                            onClick={this.submit}
+                            onClick={this.handleSubmit}
                         >
                             Sign in
                         </Button>
                         {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
                     </form>
                 </Paper>
+                <Dialog
+                    open={this.state.open}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">
+                        {"提示"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            用户账号不存在，您可以直接点击下方注册按钮直接注册该账号并体验～
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            取消
+                        </Button>
+                        <Button onClick={this.handleRegister} color="primary">
+                            注册该账号
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Notice open={this.state.noticeOpen} content={this.state.noticeContent} handleClose={this.handleNoticeClose}></Notice>
             </main>
         );
     }

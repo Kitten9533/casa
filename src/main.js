@@ -7,6 +7,7 @@ import App from './App'
 import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
+import emit from '@/utils/emit'
 
 const store = configureStore();
 
@@ -31,13 +32,35 @@ socket.on('connect', () => {
   console.log('connect')
   socket.on('disconnect', () => {
     console.log('you have been disconnected');
+    socket.open();
   });
-  socket.emit('login', {name: 'Kitten', password: '123456'});
+  // socket.emit('login', { name: 'Kitten', password: '123456' }, (res) => {
+  //   console.log('=======', res);
+  // });
+  // // socket.emit('register', {name: 'Kitten', password: '123456'});
+  // socket.emit('test', {name: 'ac', password: 'b'}, (data) => {
+  //   console.log('test', data);
+  // })
+
+  // async function abc(){
+  //   const res = await emit('login', {name: 'Kitten', password: '123456'});
+  //   console.log('end', res);
+  // }
+  // abc();
 })
 
-socket.on('loginSuccess', (res) => {
-  console.log('login success', res);
-});
+// socket.on('loginSuccess', (res) => {
+//   console.log('login success', res);
+// });
+
+// socket.on('registerSuccess', (res) => {
+//   console.log('register success', res);
+// })
+
+// socket.on('callError', (res) => {
+//   // TODO 错误处理
+//   console.log('callError', res);
+// })
 
 
 
