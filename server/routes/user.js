@@ -3,7 +3,9 @@ const User = require('../models/user');
 const tools = require('../utils/tools');
 
 const user = {
-    async register(payload) {
+    async register(payload, io, socket) {
+        assert(!socket.user, 'HAS_LOGIN');
+        
         let {
             name,
             password,
@@ -30,13 +32,21 @@ const user = {
         let res = Object.assign({}, newUser._doc || {});
         delete res['password'];
 
+        assert(!io.allUserId.hasOwnProperty(res._id), 'DO_NOT_LOGIN_AGAIN');
+
+        socket.user = res._id;
+        io.allUser[res._id] = socket;
+        io.allUserId[res._id] = true;
+
         return {
-            eventName: 'registerSuccess',
+            eventName: 'register',
             data: tools.formatRes(res),
         }
 
     },
-    async login(payload) {
+    async login(payload, io, socket) {
+        assert(!socket.user, 'HAS_LOGIN');
+
         let {
             name,
             password,
@@ -53,22 +63,36 @@ const user = {
         assert(isPasswordCorrect, 'INCORRECT_NAME_OR_PASSWORD');
 
         user.lastLoginTime = Date.now();
-        await user.save();
-
         let res = Object.assign({}, user._doc || {});
+
+        console.dir('------allUserId-----: ' + io.allUserId);
+        console.dir('------curr-----: ' + res._id);
+
+        assert(!io.allUserId.hasOwnProperty(res._id), 'DO_NOT_LOGIN_AGAIN');
+
+        await user.save();
         delete res['password'];
 
+        socket.user = res._id;
+        io.allUser[res._id] = socket;
+        io.allUserId[res._id] = true;
+
+        console.log('allUserId:' + io.allUserId);
+
         return {
-            eventName: 'loginSuccess',
+            eventName: 'login',
             data: tools.formatRes(res),
         }
+    },
+    async logout() {
+
     },
     async loginByToken() {
 
     },
     async addFriend() {
 
-    }
+    },
 }
 
 module.exports = {

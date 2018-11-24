@@ -18,14 +18,14 @@ const call = function (cb, payload, fn, io, socket) {
         return;
     }
     console.dir(`<====== interface: ${cb.name} === ${JSON.stringify(payload)}`);
-    cb(payload).then((res) => {
+    cb(payload, io, socket).then((res) => {
         let {
             eventName,
             data = null,
         } = res;
-        fn && fn(data);
-        assert(eventName, '事件名不能为空');
-        socket.emit(eventName, data);
+        fn && fn(data); // 服务端使用fn 回调返回数据给客户端
+        // assert(eventName, '事件名不能为空');
+        // socket.emit(eventName, data);
         console.dir(`${moment().format()} success:(${eventName}) ==========> ${JSON.stringify(res)}`);
         console.log('=======> end');
     }).catch((err) => {

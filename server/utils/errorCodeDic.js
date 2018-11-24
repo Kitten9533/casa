@@ -19,6 +19,14 @@ const dic = {
         msg: '账号或密码错误',
         code: 5004,
     },
+    'HAS_LOGIN': {
+        msg: '您已登录',
+        code: 5005,
+    },
+    'DO_NOT_LOGIN_AGAIN': {
+        msg: '请勿重复登录',
+        code: 5006,
+    }
 }
 
 module.exports = dic

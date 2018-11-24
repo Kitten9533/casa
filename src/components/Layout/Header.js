@@ -84,10 +84,6 @@ const styles = theme => ({
 
 class Header extends Component {
 
-    componentDidMount() {
-        console.log('header', this.props);
-    }
-
     handleTabClick = (key) => {
         const { history, match: { url }, location, } = this.props;
         let newUrl = `${url}/${key}`;

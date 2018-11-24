@@ -7,7 +7,6 @@ import App from './App'
 import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
-import emit from '@/utils/emit'
 
 const store = configureStore();
 
@@ -34,6 +33,7 @@ socket.on('connect', () => {
     console.log('you have been disconnected');
     socket.open();
   });
+
   // socket.emit('login', { name: 'Kitten', password: '123456' }, (res) => {
   //   console.log('=======', res);
   // });
