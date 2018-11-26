@@ -19,8 +19,9 @@ const call = function (cb, payload, fn, io, socket) {
     }
     console.dir(`<====== interface: ${cb.name} === ${JSON.stringify(payload)}`);
     cb(payload, io, socket).then((res) => {
+        if(!res) return;
         let {
-            eventName,
+            eventName = null,
             data = null,
         } = res;
         fn && fn(data); // 服务端使用fn 回调返回数据给客户端

@@ -2,10 +2,66 @@ const assert = require('assert');
 const User = require('../models/user');
 const tools = require('../utils/tools');
 
+const getUserByParams = async (params) => {
+    const user = await User.find({ $or: params }, { password: 0 });
+    let items = Object.assign({}, user || {});
+    let res = [];
+    Object.values(items).forEach((item) => {
+        res.push(item);
+    })
+    return res;
+}
+
+const getOfflineUserByParams = async (arr) => {
+    const user = await User.find({ name: { $nin: arr } }, { password: 0 });
+    let items = Object.assign({}, user || {});
+    let res = [];
+    Object.values(items).forEach((item) => {
+        res.push(item);
+    })
+    return res;
+}
+
+/**
+ * 刷新用户列表
+ * @param {*} io 
+ * @returns {onlineUser, afkUser, offlineUser}
+ */
+const refreshUserList = async (io) => {
+    let allUserConnected = Object.assign({}, io.allUserId);
+    let userOnline = [];
+    let userAFK = [];
+    let userOffline = []; //所有在线的userid用于 获取不在线用户
+    let result = {};
+    Object.keys(allUserConnected).forEach((key) => {
+        if (allUserConnected[key] === 'online') {
+            userOnline.push({ _id: key });
+        } else if (allUserConnected[key] === 'afk') {
+            userAFK.push({ _id: key });
+        }
+        userOffline.push(key);
+    });
+
+    if (userOnline.length > 0) {
+        // 刷新在线用户
+        result.onlineUser = await getUserByParams(userOnline);
+    } else {
+        result.onlineUser = [];
+    }
+    if (userAFK.length > 0) {
+        // 刷新离开用户
+        result.afkUser = await getUserByParams(userAFK);
+    } else {
+        result.afkUser = [];
+    }
+    result.offlineUser = await getOfflineUserByParams(userOffline);
+    return result;
+}
+
 const user = {
     async register(payload, io, socket) {
         assert(!socket.user, 'HAS_LOGIN');
-        
+
         let {
             name,
             password,
@@ -21,7 +77,7 @@ const user = {
             newUser = await User.create({
                 name,
                 password: await tools.encryption(password),
-                avatar: 'avatar',
+                avatar: tools.initalAvatar(),
                 job: 'job',
                 school: 'school',
             })
@@ -36,10 +92,10 @@ const user = {
 
         socket.user = res._id;
         io.allUser[res._id] = socket;
-        io.allUserId[res._id] = true;
+        io.allUserId[res._id] = 'online';
 
         return {
-            eventName: 'register',
+            // eventName: 'register',
             data: tools.formatRes(res),
         }
 
@@ -75,12 +131,46 @@ const user = {
 
         socket.user = res._id;
         io.allUser[res._id] = socket;
-        io.allUserId[res._id] = true;
+        io.allUserId[res._id] = 'online';
 
-        console.log('allUserId:' + io.allUserId);
+        console.dir('allUserId:');
+        console.dir(io.allUserId);
 
         return {
-            eventName: 'login',
+            // eventName: 'login',
+            data: tools.formatRes(res),
+        }
+    },
+    // async getConnectedUser(payload, io, socket) {
+    //     let params = [];
+    //     let userIds = Object.assign({}, io.allUserId);
+    //     Object.keys(userIds).forEach((item) => {
+    //         params.push({ _id: item });
+    //     })
+    //     console.log('params', params);
+    //     const user = await User.find({ $or: params }, { password: 0 });
+
+    //     let items = Object.assign({}, user || {});
+    //     let res = [];
+    //     Object.values(items).forEach((item) => {
+    //         res.push(item);
+    //     })
+
+    //     // 触发所有客户端的userList更新
+    //     io.sockets.emit('refreshConnectedUser', {
+    //         connectedUser: res
+    //     });
+
+    //     return {
+    //         data: tools.formatRes(res),
+    //     }
+    // },
+    async getUserList(payload, io, socket) {
+        let res = await refreshUserList(io); 
+        // {onlineUser, afkUser, offlineUser}
+        // 触发所有客户端的userList更新
+        io.sockets.emit('refreshUserList', res);
+        return {
             data: tools.formatRes(res),
         }
     },

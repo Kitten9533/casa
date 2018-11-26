@@ -4,9 +4,11 @@ import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
 import MsgList from '@/components/MsgList';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import ChatLayout from '@/components/ChatLayout'
+import PersonLayout from '@/components/PersonLayout'
 import Header from '@/components/Layout/header'
+import UserList from '@/components/UserList'
 
 const drawerWidth = 220;
 
@@ -43,7 +45,9 @@ class LayoutPage extends Component {
         const { user: { isLogin = false }, history } = this.props;
         if (!isLogin) {
             history.replace('/login');
+            return;
         }
+        history.replace('/layout/chat');
     }
 
     state = {
@@ -62,13 +66,25 @@ class LayoutPage extends Component {
         })
     }
 
+    renderLeftBar = (location) => {
+        const {location: {pathname = '/'}} = this.props;
+        if(pathname.indexOf('/layout/chat') > -1){
+            return <MsgList />
+        }else if(pathname.indexOf('/layout/person') > -1){
+            return <UserList />
+        }else {
+            return null
+        }
+    }
+
     render() {
         const { classes, match: { url: rootUrl } } = this.props;
+        let leftBar = this.renderLeftBar();
 
         return (
             <div className={classes.root}>
                 <CssBaseline />
-                    <Header />
+                <Header />
                 <Drawer
                     className={classes.drawer}
                     variant="permanent"
@@ -77,19 +93,18 @@ class LayoutPage extends Component {
                     }}
                 >
                     <div className={classes.toolbar} />
-                    <MsgList />
+                    {leftBar}
                 </Drawer>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
                     <Route path={`${rootUrl}/chat/:type/:id`} component={ChatLayout} />
-                    <Route path={`${rootUrl}/person`} component={ChatLayout} />
+                    <Route path={`${rootUrl}/person`} component={PersonLayout} />
                     <Route path={`${rootUrl}/dashBoard`} component={ChatLayout} />
                 </main>
             </div>
         );
     }
 }
-
 
 export default connect(
     state => {

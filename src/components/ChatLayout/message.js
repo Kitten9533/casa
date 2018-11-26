@@ -33,7 +33,7 @@ class Message extends Component {
                 key={index}
                 style={{ 'justifyContent': item.senderId !== user.id ? 'flex-start' : 'flex-end' }}>
                 {item.senderId !== user.id ? <Avatar alt="Remy Sharp"
-                    src={item.senderAvatar || ''}
+                    src={item.senderAvatar.indexOf('http') > -1 ? item.senderAvatar : require(`avatar/${item.senderAvatar}`)}
                     classes={{
                         root: classes.listItemAvatarLeft
                     }}
@@ -49,7 +49,7 @@ class Message extends Component {
                     </Typography>
                 </div>
                 {item.senderId === user.id ? <Avatar alt="Remy Sharp"
-                    src={item.senderAvatar || ''}
+                    src={user.avatar.indexOf('http') > -1 ? user.avatar : require(`avatar/${user.avatar}`)}
                     classes={{
                         root: classes.listItemAvatarRight,
                     }}

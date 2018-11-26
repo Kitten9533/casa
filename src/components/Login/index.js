@@ -77,12 +77,13 @@ function Transition(props) {
 class Login extends Component {
 
     componentDidMount() {
-
+        console.log('props', this.props);
         // TODO mock 
+        return;
         const { dispatch } = this.props;
         emit('login', { name: 'Kitten', password: '123456' }).then((res) => {
             if (res.success) {
-                dispatch(signIn(res.data));
+                dispatch(signIn(res.data))
                 setTimeout(() => {
                     this.setState({
                         loading: false,

@@ -35,7 +35,16 @@ const tools = {
             code: 200,
             msg: '',
         }
-    }
+    },
+
+    /**
+     * 获得随机的用户头像
+     * @param {*} counts 
+     */
+    initalAvatar(counts = 12){
+        const number = Math.floor(Math.random() * counts);
+        return `${number}.jpg`;
+    },
 }
 
 module.exports = {

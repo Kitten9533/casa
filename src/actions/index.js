@@ -1,3 +1,5 @@
+import emit from '@/utils/emit';
+
 let nextTodoId = 0
 export const addTodo = text => ({
   type: 'ADD_TODO',
@@ -21,9 +23,41 @@ export const VisibilityFilters = {
   SHOW_ACTIVE: 'SHOW_ACTIVE'
 }
 
-export const signIn = (userInfo) => ({
+export const signInStart = (userInfo) => ({
   type: 'SIGN_IN',
   userInfo
+})
+
+export const signIn = (userInfo) => {
+  return (dispatch, getState) => {
+    dispatch(signInStart(userInfo));
+    // emit('getConnectedUser', null).then((res) => {
+    //   if (res.success) {
+    //     dispatch(getOnlineUser(res.data));
+    //   }
+    // })
+    dispatch(getUserList());
+  }
+}
+
+export const getUserList = () => {
+  return (dispatch) => {
+    emit('getUserList', null).then((res) => {
+      if(res.success) {
+        dispatch(getUserListStart(res.data));
+      }
+    })
+  }
+}
+
+export const getUserListStart = (userList) => ({
+  type: 'GET_USER_LIST_START',
+  userList,
+})
+
+export const getOnlineUser = (onlineUser) => ({
+  type: 'GET_ONLINE_USER',
+  onlineUser,
 })
 
 export const setSelectedItem = (selectedItem) => ({

@@ -20,7 +20,8 @@ module.exports = {
             '@': path.resolve('./src'),
             root: path.resolve('./'),
             utils: path.resolve('./utils'),
-            'components': path.resolve('./src/components'),
+            components: path.resolve('./src/components'),
+            avatar: path.resolve('./static/avatar'),
         },
     },
     externals: {//引入三方包

@@ -11,6 +11,10 @@ app.get('/', function (req, res) {
     res.send('<h1>Hello world</h1>');
 });
 
+var allRoutes = {
+    ...userEvents,
+}
+
 // io.attach(http);
 
 // app.use(log());
@@ -24,18 +28,30 @@ io.on('connection', (socket) => {
     console.log('socket.user: ' + socket.user);
     console.log('connect: now online === ' + io.allClients.length);
 
-    socket.on('login', (payload, fn) => {
-        call(userEvents.login, payload, fn, io, socket);
-    })
+    // socket.on('login', (payload, fn) => {
+    //     call(userEvents.login, payload, fn, io, socket);
+    // })
 
-    socket.on('register', (payload, fn) => {
-        call(userEvents.register, payload, fn, io, socket);
+    // socket.on('register', (payload, fn) => {
+    //     call(userEvents.register, payload, fn, io, socket);
+    // })
+
+    // socket.on('getAllUser', (payload, fn) => {
+    //     call(userEvents.getAllUser, payload, fn, io, socket);
+    // })
+
+    // 绑定routes中的事件
+    Object.keys(allRoutes).forEach((eventName) => {
+        socket.on(eventName, (payload, fn) => {
+            call(allRoutes[eventName], payload, fn, io, socket);
+        });
     })
 
     socket.on('disconnect', () => {
         var i = io.allClients.indexOf(socket);
         io.allClients.splice(i, 1);
         delete io.allUser[socket.user];
+        // 在线用户退出
         delete io.allUserId[socket.user];
         console.log('socket.user: ' + socket.user);
         console.log('Got disconnect!: now online === ' + io.allClients.length);

@@ -24,6 +24,11 @@ class App extends Component {
                             )
                         } />
                         <Route path="/layout" component={Layout} />
+                        {/* <Route path="/layout" render={
+                            () => (
+                                <Redirect to="/layout/chat" />
+                            )
+                        } /> */}
                         <Route path="/login" component={LoginPage} />
                     </Switch>
                 </MuiThemeProvider>

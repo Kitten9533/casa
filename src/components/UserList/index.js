@@ -25,11 +25,11 @@ const styles = theme => ({
     }
 })
 
-class MsgList extends Component {
+class UserList extends Component {
 
     handleClick = (item) => {
         const { history, match: { url }, dispatch, location, } = this.props;
-        let newUrl = `${url}/chat/${item.type}/${item.from.id}`;
+        let newUrl = `${url}/person/single/${item._id}`;
         if (location.pathname === newUrl) {
             return;
         }
@@ -50,17 +50,23 @@ class MsgList extends Component {
     }
 
     render() {
-        const { msgList: { list = {} }, classes } = this.props;
+        // connectedUser: [],  // 在线的
+        // afkUser: [],        //离开状态的在线用户
+        // offlineUser: [],    // 离线的
+        const { userList: {
+            onlineUser = [],
+            afkUser = [],
+            offlineUser = []
+        }, classes } = this.props;
         return (
             <List>
-                {Object.values(list).map((item, index) => (
+                {Object.values(onlineUser).map((item, index) => (
                     <ListItem button key={index} onClick={() => this.handleClick(item)}>
-                        <Avatar 
-                            alt="User Avatar" 
-                            src={item.from.avatar.indexOf('http') > -1 ? item.from.avatar : require(`avatar/${item.from.avatar}`)} />
+                        <Avatar
+                            alt="User Avatar"
+                            src={item.avatar.indexOf('http') > -1 ? item.avatar : require(`avatar/${item.avatar}`)} />
                         <ListItemText
-                            primary={item.from.name}
-                            secondary={item.msgList[0] ? item.msgList[0].content : ''}
+                            primary={item.name}
                             classes={{
                                 primary: classes.textPrimary,
                                 secondary: classes.textSecondary,
@@ -75,6 +81,6 @@ class MsgList extends Component {
 
 export default withRouter(connect(state => {
     return {
-        msgList: state.msgList,
+        userList: state.userList,
     }
-})(withStyles(styles)(MsgList)))
+})(withStyles(styles)(UserList)))

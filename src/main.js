@@ -7,6 +7,7 @@ import App from './App'
 import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
+import { getUserListStart } from '@/actions'
 
 const store = configureStore();
 
@@ -33,6 +34,11 @@ socket.on('connect', () => {
     console.log('you have been disconnected');
     socket.open();
   });
+
+  // 刷新在线用户列表
+  socket.on('refreshUserList', (userList) => {
+    store.dispatch(getUserListStart(userList));
+  })
 
   // socket.emit('login', { name: 'Kitten', password: '123456' }, (res) => {
   //   console.log('=======', res);

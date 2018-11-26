@@ -9,7 +9,7 @@ const UserStateSchema = new Schema({
     },
     state: {
         type: String,
-        enum: ['online', 'offline', 'leave'],
+        enum: ['online', 'offline', 'afk'],
         default: 'offline',
     }
 })
