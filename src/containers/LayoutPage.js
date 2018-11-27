@@ -48,6 +48,7 @@ class LayoutPage extends Component {
             return;
         }
         history.replace('/layout/chat');
+        // history.replace('/layout/person');
     }
 
     state = {

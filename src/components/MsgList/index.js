@@ -51,9 +51,12 @@ class MsgList extends Component {
 
     render() {
         const { msgList: { list = {} }, classes } = this.props;
+        console.log(Object.values(list));
         return (
             <List>
-                {Object.values(list).map((item, index) => (
+                {Object.values(list).sort((a, b) => {
+                    return b.updateTime - a.updateTime
+                }).map((item, index) => (
                     <ListItem button key={index} onClick={() => this.handleClick(item)}>
                         <Avatar 
                             alt="User Avatar" 

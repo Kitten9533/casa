@@ -13,7 +13,7 @@ const getUserByParams = async (params) => {
 }
 
 const getOfflineUserByParams = async (arr) => {
-    const user = await User.find({ name: { $nin: arr } }, { password: 0 });
+    const user = await User.find({ _id: { $nin: arr } }, { password: 0 });
     let items = Object.assign({}, user || {});
     let res = [];
     Object.values(items).forEach((item) => {
@@ -25,18 +25,20 @@ const getOfflineUserByParams = async (arr) => {
 /**
  * 刷新用户列表
  * @param {*} io 
+ * @param {*} 当前用户的id
  * @returns {onlineUser, afkUser, offlineUser}
  */
-const refreshUserList = async (io) => {
+const refreshUserList = async (io, userId) => {
     let allUserConnected = Object.assign({}, io.allUserId);
     let userOnline = [];
     let userAFK = [];
     let userOffline = []; //所有在线的userid用于 获取不在线用户
     let result = {};
+    userId = userId.toString();
     Object.keys(allUserConnected).forEach((key) => {
-        if (allUserConnected[key] === 'online') {
+        if (allUserConnected[key] === 'online' && key !== userId) {
             userOnline.push({ _id: key });
-        } else if (allUserConnected[key] === 'afk') {
+        } else if (allUserConnected[key] === 'afk' && key !== userId) {
             userAFK.push({ _id: key });
         }
         userOffline.push(key);
@@ -54,6 +56,9 @@ const refreshUserList = async (io) => {
     } else {
         result.afkUser = [];
     }
+    console.dir(userOnline);
+    console.dir(userAFK);
+    console.dir(userOffline);
     result.offlineUser = await getOfflineUserByParams(userOffline);
     return result;
 }
@@ -88,11 +93,13 @@ const user = {
         let res = Object.assign({}, newUser._doc || {});
         delete res['password'];
 
-        assert(!io.allUserId.hasOwnProperty(res._id), 'DO_NOT_LOGIN_AGAIN');
+        let userId = res._id.toString();
 
-        socket.user = res._id;
-        io.allUser[res._id] = socket;
-        io.allUserId[res._id] = 'online';
+        assert(!io.allUserId.hasOwnProperty(userId), 'DO_NOT_LOGIN_AGAIN');
+
+        socket.user = userId;
+        io.allUser[userId] = socket;
+        io.allUserId[userId] = 'online';
 
         return {
             // eventName: 'register',
@@ -121,17 +128,19 @@ const user = {
         user.lastLoginTime = Date.now();
         let res = Object.assign({}, user._doc || {});
 
-        console.dir('------allUserId-----: ' + io.allUserId);
-        console.dir('------curr-----: ' + res._id);
+        let userId = res._id;
 
-        assert(!io.allUserId.hasOwnProperty(res._id), 'DO_NOT_LOGIN_AGAIN');
+        console.dir('------allUserId-----: ' + io.allUserId);
+        console.dir('------curr-----: ' + userId);
+
+        assert(!io.allUserId.hasOwnProperty(userId), 'DO_NOT_LOGIN_AGAIN');
 
         await user.save();
         delete res['password'];
 
-        socket.user = res._id;
-        io.allUser[res._id] = socket;
-        io.allUserId[res._id] = 'online';
+        socket.user = userId;
+        io.allUser[userId] = socket;
+        io.allUserId[userId] = 'online';
 
         console.dir('allUserId:');
         console.dir(io.allUserId);
@@ -166,7 +175,7 @@ const user = {
     //     }
     // },
     async getUserList(payload, io, socket) {
-        let res = await refreshUserList(io); 
+        let res = await refreshUserList(io, socket.user); 
         // {onlineUser, afkUser, offlineUser}
         // 触发所有客户端的userList更新
         io.sockets.emit('refreshUserList', res);

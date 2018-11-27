@@ -1,28 +1,5 @@
 import emit from '@/utils/emit';
 
-let nextTodoId = 0
-export const addTodo = text => ({
-  type: 'ADD_TODO',
-  id: nextTodoId++,
-  text
-})
-
-export const setVisibilityFilter = filter => ({
-  type: 'SET_VISIBILITY_FILTER',
-  filter
-})
-
-export const toggleTodo = id => ({
-  type: 'TOGGLE_TODO',
-  id
-})
-
-export const VisibilityFilters = {
-  SHOW_ALL: 'SHOW_ALL',
-  SHOW_COMPLETED: 'SHOW_COMPLETED',
-  SHOW_ACTIVE: 'SHOW_ACTIVE'
-}
-
 export const signInStart = (userInfo) => ({
   type: 'SIGN_IN',
   userInfo
@@ -31,11 +8,6 @@ export const signInStart = (userInfo) => ({
 export const signIn = (userInfo) => {
   return (dispatch, getState) => {
     dispatch(signInStart(userInfo));
-    // emit('getConnectedUser', null).then((res) => {
-    //   if (res.success) {
-    //     dispatch(getOnlineUser(res.data));
-    //   }
-    // })
     dispatch(getUserList());
   }
 }
@@ -63,4 +35,13 @@ export const getOnlineUser = (onlineUser) => ({
 export const setSelectedItem = (selectedItem) => ({
   type: 'SET_SELECTED_ITEM',
   selectedItem,
+})
+
+/**
+ * 向联系人发送消息, 同时聊天列表中加入该用户
+ * @param {*} userInfo 传入用户信息
+ */
+export const sendMsgToContact = (userInfo) => ({
+  type: 'SEND_MSG_TO_CONTACT',
+  userInfo
 })

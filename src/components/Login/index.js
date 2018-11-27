@@ -79,7 +79,7 @@ class Login extends Component {
     componentDidMount() {
         console.log('props', this.props);
         // TODO mock 
-        return;
+        // return;
         const { dispatch } = this.props;
         emit('login', { name: 'Kitten', password: '123456' }).then((res) => {
             if (res.success) {
