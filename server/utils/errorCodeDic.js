@@ -26,6 +26,10 @@ const dic = {
     'DO_NOT_LOGIN_AGAIN': {
         msg: '请勿重复登录',
         code: 5006,
+    },
+    'NO_TOUSER': {
+        msg: '未找到消息接收人',
+        code: 5007,
     }
 }
 
