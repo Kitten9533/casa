@@ -97,7 +97,7 @@ const user = {
 
         assert(!io.allUserId.hasOwnProperty(userId), 'DO_NOT_LOGIN_AGAIN');
 
-        socket.user = userId;
+        socket.user = res._id; //  ObjectId
         io.allUser[userId] = socket;
         io.allUserId[userId] = 'online';
 
@@ -138,7 +138,7 @@ const user = {
         await user.save();
         delete res['password'];
 
-        socket.user = userId;
+        socket.user = res._id; //   ObjectId
         io.allUser[userId] = socket;
         io.allUserId[userId] = 'online';
 

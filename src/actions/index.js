@@ -38,10 +38,24 @@ export const setSelectedItem = (selectedItem) => ({
 })
 
 /**
- * 向联系人发送消息, 同时聊天列表中加入该用户
+ * 联系人列表 点击联系人-发送即时消息
  * @param {*} userInfo 传入用户信息
  */
 export const sendMsgToContact = (userInfo) => ({
   type: 'SEND_MSG_TO_CONTACT',
-  userInfo
+  userInfo,
+})
+
+/**
+ * 设置草稿
+ * @param {*} draft 
+ */
+export const setDraft = (draft) => ({
+  type: 'SET_DRAFT',
+  draft,
+})
+
+export const deleteDraft = (draft) => ({
+  type: 'DELETE_DRAFT',
+  draft,
 })

@@ -68,12 +68,12 @@ class LayoutPage extends Component {
     }
 
     renderLeftBar = (location) => {
-        const {location: {pathname = '/'}} = this.props;
-        if(pathname.indexOf('/layout/chat') > -1){
+        const { location: { pathname = '/' } } = this.props;
+        if (pathname.indexOf('/layout/chat') > -1) {
             return <MsgList />
-        }else if(pathname.indexOf('/layout/person') > -1){
+        } else if (pathname.indexOf('/layout/person') > -1) {
             return <UserList />
-        }else {
+        } else {
             return null
         }
     }

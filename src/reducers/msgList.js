@@ -3,12 +3,20 @@
  */
 
 let initalState = {
+    //  --- 当前选择的聊天对象  暂时不用
     selectedItem: {
         type: '',
         msgList: [],
         from: {},
         to: {},
-    }, // 当前选择的聊天对象
+    }, 
+    // 聊天草稿
+    draftList: {
+        // 'group_44': {
+        //     msgType: 'text',    //enum: ['text', 'image', 'audio', 'video'],
+        //     content: '',
+        // }
+    },
     list: {
         'group_44': {
             type: 'group',
@@ -88,13 +96,49 @@ const msgList = (state = initalState, action) => {
                 selectedItem: action.selectedItem,
             }
         case 'SEND_MSG_TO_CONTACT':
-            const { _id: id, avatar, name } = action.userInfo;
+            let { _id: id, avatar, name } = action.userInfo;
             let from = { id, avatar, name };
             let old = state.list[`single_${id}`] || { type: 'single', msgList: [] };
             let newObj = { ...old, from, updateTime: Date.now() };
-            state.list[`single_${id}`] = newObj;
             return {
                 ...state,
+                list: {
+                    ...state.list,
+                    [`single_${id}`]: newObj,
+                }
+            }
+        case 'SET_DRAFT':
+            let {
+                toUser,
+                msgType = 'text',
+                content = '',
+            } = action.draft;
+            return {
+                ...state,
+                draftList: {
+                    ...state.draftList,
+                    ...{
+                        [toUser]: { content, msgType }
+                    }
+                },
+                list: {
+                    ...state.list,
+                    [toUser]: {
+                        ...state.list[toUser],
+                        updateTime: Date.now()
+                    }
+                }
+            }
+        case 'DELETE_DRAFT':
+            let {
+                toUser: key,
+            } = action.draft;
+            delete state.draftList[key];
+            return {
+                ...state,
+                list: {
+                    ...state.list,
+                }
             }
         default:
             return state

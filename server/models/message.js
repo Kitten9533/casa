@@ -9,7 +9,7 @@ const MessageSchema = new Schema({
     },
     msgType: {
         type: String,
-        enum: ['text', 'image', 'code', 'audio', 'video'],
+        enum: ['text', 'image', 'audio', 'video'],
         default: 'text',
     },
     createTime: {

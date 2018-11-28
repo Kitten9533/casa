@@ -6,7 +6,10 @@ import FolderOpen from '@material-ui/icons/FolderOpen';
 import History from '@material-ui/icons/History';
 import Send from '@material-ui/icons/Send';
 import Button from '@material-ui/core/Button';
+import { withRouter } from 'react-router'
 import * as extraStyles from './chatInput.less'
+import { setDraft, deleteDraft } from '@/actions'
+import { connect } from 'react-redux'
 
 const styles = theme => ({
     inputBox: {
@@ -19,7 +22,7 @@ const styles = theme => ({
         paddingLeft: theme.spacing.unit * 2,
         paddingRight: theme.spacing.unit * 2,
         borderTop: '1px solid #f6f7f9',
-        // borderBottom: '1px solid #f6f7f9',
+        borderBottom: '1px solid #f9fafb',
     },
     toolIcon: {
         padding: 8,
@@ -37,9 +40,12 @@ const styles = theme => ({
         resize: 'none',
         flex: 1,
         fontSize: 16,
-        padding: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit * 3,
-        paddingRight: theme.spacing.unit * 3,
+        lineHeight: '20px',
+        height: 60,
+        padding: 0,
+        // margin: theme.spacing.unit,
+        marginLeft: theme.spacing.unit * 3,
+        marginRight: theme.spacing.unit * 3,
         backgroundColor: theme.palette.common.white,
         border: 'none',
         '&:focus': {
@@ -50,10 +56,11 @@ const styles = theme => ({
         display: 'flex',
         flex: 1,
         flexDirection: 'row',
+        alignItems: 'center',
     },
     sendButton: {
         height: 40,
-        alignSelf: 'flex-end',
+        // alignSelf: 'flex-end',
         margin: theme.spacing.unit,
     },
     rightIcon: {
@@ -62,8 +69,61 @@ const styles = theme => ({
 })
 
 class ChatInput extends Component {
+
+    state = {
+        content: '',
+        msgType: 'text',
+    }
+
+    componentWillReceiveProps(nextProps) {
+        let { content, msgType } = this.state;
+        if (this.props.location.pathname !== nextProps.location.pathname) { // 聊天人切换
+            const { dispatch, match: { params } } = this.props;
+            const { type, id } = params;
+            if (!!content) {
+                // 设置草稿
+                dispatch(setDraft({
+                    toUser: `${type}_${id}`,
+                    content,
+                    msgType,
+                }));
+                this.setState({
+                    content: '',
+                    msgType: 'text',
+                })
+            }else{
+                // 清空草稿
+                dispatch(deleteDraft({
+                    toUser: `${type}_${id}`,
+                }));
+            }
+        } else {
+            // 草稿恢复到输入框
+            const { match: { params }, msgList: { draftList = {} }, dispatch } = nextProps;
+            const { type, id } = params;
+            let key = `${type}_${id}`;
+            let draft = draftList[key] || '';
+            if (!draft) return;
+            this.setState({
+                content: draft.content,
+                msgType: draft.msgList,
+            }, () => {
+                dispatch(deleteDraft({
+                    toUser: `${type}_${id}`,
+                }));
+            })
+        }
+    }
+
+    handleChange = (e) => {
+        this.setState({
+            content: e.target.value,
+        });
+    }
+
     render() {
         const { classes } = this.props;
+        const { content } = this.state;
         return (
             <div className={extraStyles.container}>
                 <label htmlFor="input-content">
@@ -83,7 +143,10 @@ class ChatInput extends Component {
                     <textarea
                         id="input-content"
                         className={classes.inputContent}
-                        defaultValue=""
+                        // defaultValue=""
+                        onChange={this.handleChange}
+                        value={content}
+                        rows={3}
                     ></textarea>
                     <Button variant="contained" color="primary" className={classes.sendButton}>
                         Send
@@ -95,4 +158,8 @@ class ChatInput extends Component {
     }
 }
 
-export default withStyles(styles, { withTheme: true })(ChatInput)
+export default withRouter(connect(state => {
+    return {
+        msgList: state.msgList,
+    }
+})(withStyles(styles)(ChatInput)))

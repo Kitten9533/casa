@@ -14,12 +14,18 @@ const message = {
         let newMsg = null;
         try{
             newMsg = await Message.create({
-
+                fromUser: socket.user,
+                toUser: toUser,
+                content,
+                msgType,
             })
         } catch(e){
             throw e;
         }
         let res = Object.assign({}, newMsg._doc || {});
+        return {
+            data: tools.formatRes(res),
+        }
         // TODO
     },
     async sendMessageToGroup(payload, io, socket) {

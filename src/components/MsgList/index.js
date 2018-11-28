@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'react-router'
 import { withStyles } from '@material-ui/core/styles';
-import { setSelectedItem } from '@/actions'
+// import { setSelectedItem } from '@/actions'
 
 const textEllipsis = {
     overflow: 'hidden',
@@ -33,11 +33,11 @@ class MsgList extends Component {
         if (location.pathname === newUrl) {
             return;
         }
-        dispatch(setSelectedItem(item));
+        // dispatch(setSelectedItem(item));
         history.push(newUrl);
     }
 
-    componentWillUpdate(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if (this.props.location.pathname !== nextProps.location.pathname) {
             this.changeFromUser();
         }
@@ -50,8 +50,8 @@ class MsgList extends Component {
     }
 
     render() {
-        const { msgList: { list = {} }, classes } = this.props;
-        console.log(Object.values(list));
+        const { msgList: { list = {}, draftList = {} }, classes, location: {pathname = ''} } = this.props;
+        console.log(this.props);
         return (
             <List>
                 {Object.values(list).sort((a, b) => {
@@ -59,11 +59,16 @@ class MsgList extends Component {
                 }).map((item, index) => (
                     <ListItem button key={index} onClick={() => this.handleClick(item)}>
                         <Avatar 
-                            alt="User Avatar" 
+                            alt="User Avatar"
                             src={item.from.avatar.indexOf('http') > -1 ? item.from.avatar : require(`avatar/${item.from.avatar}`)} />
                         <ListItemText
                             primary={item.from.name}
-                            secondary={item.msgList[0] ? item.msgList[0].content : ''}
+                            secondary={
+                                // draftList[`${item.type}_${item.from.id}`] && !pathname.indexOf(`/${item.type}/${item.from.id}`) > -1 ? 
+                                draftList[`${item.type}_${item.from.id}`] ? 
+                                `[草稿]${draftList[`${item.type}_${item.from.id}`].content}` : 
+                                (item.msgList[0] ? item.msgList[0].content : '')
+                            }
                             classes={{
                                 primary: classes.textPrimary,
                                 secondary: classes.textSecondary,
