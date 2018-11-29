@@ -11,26 +11,27 @@ import PrivateRoute from '@/auth/PrivateRoute'
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { themeOne, themeTwo } from '@/theme'
 import './main.css'
+import Notifier from '@/Notifier';
+import ConsecutiveSnackbars from '@/components/ConsecutiveSnackbars'
 
 class App extends Component {
     render() {
+        const { snackbars: { queue = [] } } = this.props;
         return (
             <Router>
                 <MuiThemeProvider theme={themeTwo}>
-                    <Switch>
-                        <Route exact path="/" render={
-                            () => (
-                                <Redirect to="/layout" />
-                            )
-                        } />
-                        <Route path="/layout" component={Layout} />
-                        {/* <Route path="/layout" render={
-                            () => (
-                                <Redirect to="/layout/chat" />
-                            )
-                        } /> */}
-                        <Route path="/login" component={LoginPage} />
-                    </Switch>
+                    <div>
+                        <ConsecutiveSnackbars queue={queue} />
+                        <Switch>
+                            <Route exact path="/" render={
+                                () => (
+                                    <Redirect to="/layout" />
+                                )
+                            } />
+                            <Route path="/layout" component={Layout} />
+                            <Route path="/login" component={LoginPage} />
+                        </Switch>
+                    </div>
                 </MuiThemeProvider>
             </Router>
         );
@@ -40,6 +41,7 @@ class App extends Component {
 // export default withRouter(connect()(App))
 export default connect(state => {
     return {
-        user: state.user
+        user: state.user,
+        snackbars: state.snackbars,
     }
 })(App)

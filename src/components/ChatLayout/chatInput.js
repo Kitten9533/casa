@@ -121,6 +121,7 @@ class ChatInput extends Component {
         const { id } = params;
         if (!id) return;
         const { content, msgType } = this.state;
+        if(!content) return;
         const res = await emit('sendMessageToOne', {
             toUser: id,
             content,

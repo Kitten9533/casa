@@ -42,3 +42,10 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+## Ohters
+###### 如果出现类似报错 
+symbol lookup error: /root/projects/casa/node_modules/bcrypt/lib/binding/bcrypt_lib.node: undefined symbol
+##### 可使用以下方式解决
+##### `npm rebuild bcrypt --build-from-source`

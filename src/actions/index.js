@@ -76,3 +76,26 @@ export const receiveMessageFromOne = (msg) => {
     dispatch(receiveMessageFromOneStart(msg, key));
   }
 }
+
+// export const enqueueSnackbar = notification => ({
+//   type: 'ENQUEUE_SNACKBAR',
+//   notification: {
+//     key: new Date().getTime() + Math.random(),
+//     ...notification,
+//   },
+// });
+
+// export const removeSnackbar = key => ({
+//   type: 'REMOVE_SNACKBAR',
+//   key,
+// });
+
+export const addSnackbar = (queue) => ({
+  type: 'ADD_SNACKBAR',
+  queue,
+})
+
+export const removeSnackbar = (key) => ({
+  type: 'REMOVE_SNACKBAR',
+  key,
+})

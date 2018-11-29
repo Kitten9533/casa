@@ -8,6 +8,8 @@ import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
 import { getUserListStart, receiveMessageFromOne } from '@/actions'
+import { SnackbarProvider } from 'notistack';
+import Button from '@material-ui/core/Button';
 
 const store = configureStore();
 
@@ -49,7 +51,21 @@ function addSocketEvents() {
 const renderApp = () => {
   render(
     <Provider store={store}>
-      <App />
+      {/* <SnackbarProvider
+        action={[
+          <Button color="secondary" size="small">
+            Alert
+        </Button>
+        ]}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        maxSnack={3}
+        onClickAction={() => alert('Clicked on my action button.')}
+      > */}
+        <App />
+      {/* </SnackbarProvider> */}
     </Provider>,
     document.getElementById('root')
   )

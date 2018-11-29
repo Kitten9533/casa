@@ -66,7 +66,7 @@ class MsgList extends Component {
                                 // draftList[`${item.type}_${item.from.id}`] && !pathname.indexOf(`/${item.type}/${item.from.id}`) > -1 ? 
                                 draftList[`${item.type}_${item.from.id}`] ? 
                                 `[草稿]${draftList[`${item.type}_${item.from.id}`].content}` : 
-                                (item.msgList[0] ? item.msgList[0].content : '')
+                                (item.msgList.length > 0 ? item.msgList[item.msgList.length - 1].content : '')
                             }
                             classes={{
                                 primary: classes.textPrimary,

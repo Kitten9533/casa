@@ -58,6 +58,11 @@ class Message extends Component {
         )
     }
 
+    componentDidUpdate(){
+        console.log(this.list);
+        this.list.scrollTop = this.list.scrollHeight;
+    }
+
     render() {
         const { msgList: { list = {} }, match: { params = {} } } = this.props;
         let { type, id } = params;
@@ -65,7 +70,7 @@ class Message extends Component {
         let info = list[key] || { msgList: [] };
         let { msgList } = info;
         return (
-            <div className={extraStyles.container}>
+            <div className={extraStyles.container} ref={(refs) => this.list = refs}>
                 <List>
                     {msgList.map((item, index) => (
                         this.renderMsg(item, index)
