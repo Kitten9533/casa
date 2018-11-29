@@ -30,7 +30,15 @@ const dic = {
     'NO_TOUSER': {
         msg: '未找到消息接收人',
         code: 5007,
-    }
+    },
+    'PLEASE_LOGIN': {
+        msg: '请先登录',
+        code: 5008,
+    },
+    'ERR_IN_MESSAGE_FIND': {
+        msg: '查询消息记录时出错',
+        code: 5009,
+    },
 }
 
 module.exports = dic

@@ -36,9 +36,9 @@ const refreshUserList = async (io, userId) => {
     let result = {};
     userId = userId.toString();
     Object.keys(allUserConnected).forEach((key) => {
-        if (allUserConnected[key] === 'online' && key !== userId) {
+        if (allUserConnected[key] === 'online') {
             userOnline.push({ _id: key });
-        } else if (allUserConnected[key] === 'afk' && key !== userId) {
+        } else if (allUserConnected[key] === 'afk') {
             userAFK.push({ _id: key });
         }
         userOffline.push(key);
@@ -100,6 +100,7 @@ const user = {
         socket.user = res._id; //  ObjectId
         io.allUser[userId] = socket;
         io.allUserId[userId] = 'online';
+        io.userToSocket[userId.toString()] = socket.id;
 
         return {
             // eventName: 'register',
@@ -141,6 +142,7 @@ const user = {
         socket.user = res._id; //   ObjectId
         io.allUser[userId] = socket;
         io.allUserId[userId] = 'online';
+        io.userToSocket[userId.toString()] = socket.id;
 
         console.dir('allUserId:');
         console.dir(io.allUserId);

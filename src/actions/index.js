@@ -15,7 +15,7 @@ export const signIn = (userInfo) => {
 export const getUserList = () => {
   return (dispatch) => {
     emit('getUserList', null).then((res) => {
-      if(res.success) {
+      if (res.success) {
         dispatch(getUserListStart(res.data));
       }
     })
@@ -55,7 +55,24 @@ export const setDraft = (draft) => ({
   draft,
 })
 
+// 删除草稿
 export const deleteDraft = (draft) => ({
   type: 'DELETE_DRAFT',
   draft,
 })
+
+// 接受单人发送过来的消息
+export const receiveMessageFromOneStart = (msg, key) => ({
+  type: 'RECEIVE_MESSAGE_FROM_ONE_START',
+  msg,
+  key,
+})
+
+export const receiveMessageFromOne = (msg) => {
+  let userInfo = msg.from;
+  return (dispatch) => {
+    dispatch(sendMsgToContact(userInfo));
+    let key = `single_${userInfo._id}`;
+    dispatch(receiveMessageFromOneStart(msg, key));
+  }
+}

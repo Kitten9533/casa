@@ -51,7 +51,6 @@ class MsgList extends Component {
 
     render() {
         const { msgList: { list = {}, draftList = {} }, classes, location: {pathname = ''} } = this.props;
-        console.log(this.props);
         return (
             <List>
                 {Object.values(list).sort((a, b) => {

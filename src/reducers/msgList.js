@@ -9,7 +9,7 @@ let initalState = {
         msgList: [],
         from: {},
         to: {},
-    }, 
+    },
     // 聊天草稿
     draftList: {
         // 'group_44': {
@@ -138,6 +138,23 @@ const msgList = (state = initalState, action) => {
                 ...state,
                 list: {
                     ...state.list,
+                }
+            }
+        case 'RECEIVE_MESSAGE_FROM_ONE_START':
+            // action.msg
+            let { list = {} } = state;
+            // 此处已经有了 list[action.key] = {} 可以直接使用消息列表 list[action.key].msgList
+            if (!list[action.key]) { list[action.key] = { msgList: [] } }
+            let { msgList } = list[action.key];
+            msgList.push(action.msg);
+            return {
+                ...state,
+                list: {
+                    ...state.list,
+                    [action.key]: {
+                        ...state.list[action.key],
+                        msgList,
+                    }
                 }
             }
         default:

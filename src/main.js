@@ -7,9 +7,44 @@ import App from './App'
 import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
-import { getUserListStart } from '@/actions'
+import { getUserListStart, receiveMessageFromOne } from '@/actions'
 
 const store = configureStore();
+
+function addSocketEvents() {
+  socket.on('connect', () => {
+    console.log('connect')
+    socket.on('disconnect', () => {
+      console.log('you have been disconnected');
+      socket.open();
+    });
+
+    // 刷新在线用户列表
+    socket.on('refreshUserList', (userList) => {
+      store.dispatch(getUserListStart(userList));
+    })
+
+    // 接收到某用户发来的消息
+    socket.on('receiveMessageFromOne', (msg) => {
+      console.log(msg);
+      store.dispatch(receiveMessageFromOne(msg));
+    })
+
+    // socket.emit('login', { name: 'Kitten', password: '123456' }, (res) => {
+    //   console.log('=======', res);
+    // });
+    // // socket.emit('register', {name: 'Kitten', password: '123456'});
+    // socket.emit('test', {name: 'ac', password: 'b'}, (data) => {
+    //   console.log('test', data);
+    // })
+
+    // async function abc(){
+    //   const res = await emit('login', {name: 'Kitten', password: '123456'});
+    //   console.log('end', res);
+    // }
+    // abc();
+  })
+}
 
 const renderApp = () => {
   render(
@@ -25,35 +60,7 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
 }
 
 renderApp()
-
-console.log(socket);
-
-socket.on('connect', () => {
-  console.log('connect')
-  socket.on('disconnect', () => {
-    console.log('you have been disconnected');
-    socket.open();
-  });
-
-  // 刷新在线用户列表
-  socket.on('refreshUserList', (userList) => {
-    store.dispatch(getUserListStart(userList));
-  })
-
-  // socket.emit('login', { name: 'Kitten', password: '123456' }, (res) => {
-  //   console.log('=======', res);
-  // });
-  // // socket.emit('register', {name: 'Kitten', password: '123456'});
-  // socket.emit('test', {name: 'ac', password: 'b'}, (data) => {
-  //   console.log('test', data);
-  // })
-
-  // async function abc(){
-  //   const res = await emit('login', {name: 'Kitten', password: '123456'});
-  //   console.log('end', res);
-  // }
-  // abc();
-})
+addSocketEvents();
 
 // socket.on('loginSuccess', (res) => {
 //   console.log('login success', res);

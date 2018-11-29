@@ -160,7 +160,7 @@ class Login extends Component {
         }
         const res = await emit(type, { name, password });
         if (res.success) {
-            dispatch(signIn());
+            dispatch(signIn(res.data));
             setTimeout(() => {
                 this.setState({
                     loading: false,

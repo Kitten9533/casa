@@ -84,7 +84,7 @@ class UserList extends Component {
     handleSendMsg = (item) => {
         // send message
         console.log('send message', item);
-        const { history, match: { url }, dispatch} = this.props;
+        const { history, match: { url }, dispatch } = this.props;
         let newUrl = `${url}/chat/single/${item._id}`;
         dispatch(sendMsgToContact(item));
         history.push(newUrl);
@@ -122,7 +122,7 @@ class UserList extends Component {
             selectItem: item,
         });
     }
-    
+
     handleMenuClose = () => {
         this.setState({
             anchorEl: null,
@@ -206,10 +206,14 @@ class UserList extends Component {
             onlineUser = [],
             afkUser = [],
             offlineUser = []
-        }, classes } = this.props;
+        }, classes, user = {} } = this.props;
         const { anchorEl } = this.state;
         const open = Boolean(anchorEl);
-        let onlineSlot = this.renderList(onlineUser, 'ONLINE');
+        let newOnlineUser = onlineUser.filter((item) => {
+            return item._id !== user._id;
+        });
+        let onlineSlot = this.renderList(newOnlineUser, 'ONLINE');
+
         let afkSlot = this.renderList(afkUser, 'AFK');
         let offlineSlot = this.renderList(offlineUser, 'OFFLINE');
         let optionSlot = this.renderOption(this.options);
@@ -249,5 +253,6 @@ class UserList extends Component {
 export default withRouter(connect(state => {
     return {
         userList: state.userList,
+        user: state.user,
     }
 })(withStyles(styles)(UserList)))

@@ -8,8 +8,9 @@ import Send from '@material-ui/icons/Send';
 import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router'
 import * as extraStyles from './chatInput.less'
-import { setDraft, deleteDraft } from '@/actions'
+import { setDraft, deleteDraft, receiveMessageFromOne } from '@/actions'
 import { connect } from 'react-redux'
+import emit from '@/utils/emit';
 
 const styles = theme => ({
     inputBox: {
@@ -91,7 +92,7 @@ class ChatInput extends Component {
                     content: '',
                     msgType: 'text',
                 })
-            }else{
+            } else {
                 // 清空草稿
                 dispatch(deleteDraft({
                     toUser: `${type}_${id}`,
@@ -112,6 +113,44 @@ class ChatInput extends Component {
                     toUser: `${type}_${id}`,
                 }));
             })
+        }
+    }
+
+    handleSendMsg = async () => {
+        const { match: { params }, dispatch } = this.props;
+        const { id } = params;
+        if (!id) return;
+        const { content, msgType } = this.state;
+        const res = await emit('sendMessageToOne', {
+            toUser: id,
+            content,
+            msgType,
+        });
+        console.log(res);
+        if (res.success) {
+            // 替换发送人信息为自己
+            // 修改 接受别人消息 为发送消息给别人
+            let { from = {}, to = {} } = res.data;
+            dispatch(receiveMessageFromOne({
+                ...res.data,
+                from: to,
+                to: from,
+            }));
+        } else {
+            // TODO 发送失败提示
+        }
+        this.setState({
+            content: '',
+        })
+    }
+
+    handleKeyDown = (e) => {
+        // console.log(typeof e.keyCode);
+        // console.log(e.keyCode);
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.handleSendMsg();
         }
     }
 
@@ -145,10 +184,11 @@ class ChatInput extends Component {
                         className={classes.inputContent}
                         // defaultValue=""
                         onChange={this.handleChange}
+                        onKeyDown={this.handleKeyDown}
                         value={content}
                         rows={3}
                     ></textarea>
-                    <Button variant="contained" color="primary" className={classes.sendButton}>
+                    <Button variant="contained" color="primary" className={classes.sendButton} onClick={this.handleSendMsg}>
                         Send
                         <Send className={classes.rightIcon} />
                     </Button>
@@ -161,5 +201,6 @@ class ChatInput extends Component {
 export default withRouter(connect(state => {
     return {
         msgList: state.msgList,
+        user: state.user,
     }
 })(withStyles(styles)(ChatInput)))

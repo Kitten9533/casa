@@ -5,7 +5,7 @@ const MessageSchema = new Schema({
     status: {
         type: String,
         enum: ['read', 'unread'],
-        default: 'read',
+        default: 'unread',
     },
     msgType: {
         type: String,
@@ -19,11 +19,13 @@ const MessageSchema = new Schema({
     },
     fromUser: {
         type: Schema.Types.ObjectId,
+        index: true,
         ref: 'User',
     },
     toUser: {
-        type: String,
+        type: Schema.Types.ObjectId,
         index: true,
+        ref: 'User',
     },
     content: {
         type: String,

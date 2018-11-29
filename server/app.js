@@ -2,6 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const userEvents = require('./routes/user');
+const messageEvents = require('./routes/message');
 const catchError = require('./middlewares/catchError');
 const log = require('./middlewares/log');
 const call = require('./utils/call');
@@ -13,6 +14,7 @@ app.get('/', function (req, res) {
 
 var allRoutes = {
     ...userEvents,
+    ...messageEvents,
 }
 
 // io.attach(http);
@@ -22,6 +24,9 @@ var allRoutes = {
 io.allClients = []; // 所有连接的客户端， 包括游客和库中的用户
 io.allUser = {};    // 在线的用户，数据库中有账号信息的用户
 io.allUserId = {};  // 在线的用户id
+io.userToSocket = {
+    // userId: socketId
+} // 存放用户对应的socket
 
 io.on('connection', (socket) => {
     io.allClients.push(socket);
@@ -53,6 +58,7 @@ io.on('connection', (socket) => {
         delete io.allUser[socket.user];
         // 在线用户退出
         delete io.allUserId[socket.user];
+        delete io.userToSocket[socket.user.toString()];
         console.log('socket.user: ' + socket.user);
         console.log('Got disconnect!: now online === ' + io.allClients.length);
     })
