@@ -102,6 +102,11 @@ const user = {
         io.allUserId[userId] = 'online';
         io.userToSocket[userId.toString()] = socket.id;
 
+        socket.broadcast.emit('receiveMessageFromSystem', {
+            content: `系统消息: 新用户 ${res.name} 上线啦`,
+            toUrl: `/layout/chat/single/${res._id}`,
+        });
+
         return {
             // eventName: 'register',
             data: tools.formatRes(res),
@@ -146,6 +151,11 @@ const user = {
 
         console.dir('allUserId:');
         console.dir(io.allUserId);
+
+        socket.broadcast.emit('receiveMessageFromSystem', {
+            content: `系统消息: 用户 ${res.name} 上线啦`,
+            toUrl: `/layout/chat/single/${res._id}`,
+        });
 
         return {
             // eventName: 'login',

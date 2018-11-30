@@ -28,11 +28,24 @@ function addSocketEvents() {
 
     // 接收到某用户发来的消息
     socket.on('receiveMessageFromOne', (msg) => {
-      console.log(msg);
       store.dispatch(receiveMessageFromOne(msg));
       store.dispatch(addSnackbar({
         message: `${msg.sender}: ${msg.content}`,
         toUrl: `/layout/chat/single/${msg.senderId}`,
+        btnName: '查看',
+        variant: 'info',
+        key: new Date().getTime(),
+      }));
+    })
+
+    // 接收到系统消息时
+    socket.on('receiveMessageFromSystem', (msg) => {
+      console.log('receiveMessageFromSystem', msg);
+      store.dispatch(addSnackbar({
+        message: msg.content,
+        toUrl: msg.toUrl,
+        btnName: '聊天',
+        variant: '',
         key: new Date().getTime(),
       }));
     })

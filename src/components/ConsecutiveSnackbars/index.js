@@ -74,7 +74,7 @@ function MySnackbarContent(props) {
             aria-describedby="client-snackbar"
             message={
                 <span id="client-snackbar" className={classes.message}>
-                    <Icon className={classNames(classes.icon, classes.iconVariant)} />
+                    {variantIcon[variant] && <Icon className={classNames(classes.icon, classes.iconVariant)} />}
                     {message}
                 </span>
             }
@@ -99,7 +99,7 @@ MySnackbarContent.propTypes = {
     className: PropTypes.string,
     message: PropTypes.node,
     onClose: PropTypes.func,
-    variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
+    variant: PropTypes.oneOf(['success', 'warning', 'error', 'info', '']).isRequired,
 };
 
 const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
@@ -113,52 +113,18 @@ class ConsecutiveSnackbars extends React.Component {
         messageInfo: {},
     };
 
-    // static propTypes = {
-    //     queue: PropTypes.array,
-    // }
-
-    // static defaultProps = {
-    //     queue: [],
-    // }
-
-    // processQueue = () => {
-
-    // }
-
-    // handleClose = () => {
-
-    // }
-
-    // handleExited = () => {
-
-    // }
-
     componentWillReceiveProps(nextProps) {
-        this.queue = nextProps.queue;
-        console.log(nextProps);
-        if (this.state.open) {
-            // immediately begin dismissing current message
-            // to start showing new one
-            this.setState({ open: false });
-        } else {
-            this.processQueue();
+        if(nextProps.queue !== this.queue){
+            this.queue = nextProps.queue;
+            if (this.state.open) {
+                // immediately begin dismissing current message
+                // to start showing new one
+                this.setState({ open: false });
+            } else {
+                this.processQueue();
+            }
         }
     }
-
-    // handleClick = message => () => {
-    //     this.queue.push({
-    //         message,
-    //         key: new Date().getTime(),
-    //     });
-
-    //     if (this.state.open) {
-    //         // immediately begin dismissing current message
-    //         // to start showing new one
-    //         this.setState({ open: false });
-    //     } else {
-    //         this.processQueue();
-    //     }
-    // };
 
     processQueue = () => {
         if (this.queue.length > 0) {
@@ -170,8 +136,8 @@ class ConsecutiveSnackbars extends React.Component {
     };
 
     handleShow = (toUrl) => {
-        const {history} = this.props;
-        if(!!toUrl){
+        const { history } = this.props;
+        if (!!toUrl) {
             history.push(toUrl);
         }
         this.setState({ open: false });
@@ -200,7 +166,7 @@ class ConsecutiveSnackbars extends React.Component {
                     horizontal: 'left',
                 }}
                 open={this.state.open}
-                autoHideDuration={1000000}
+                autoHideDuration={4000}
                 onClose={this.handleClose}
                 onExited={this.handleExited}
                 ContentProps={{
@@ -209,11 +175,11 @@ class ConsecutiveSnackbars extends React.Component {
             >
                 <MySnackbarContentWrapper
                     onClose={this.handleClose}
-                    variant="info"
+                    variant={messageInfo.variant || ''}
                     message={<div id="message-id" onClick={() => this.handleShow(messageInfo.toUrl)} style={msgContent}>{messageInfo.message}</div>}
                     action={[
                         <Button key="show" color="primary" size="small" onClick={() => this.handleShow(messageInfo.toUrl)}>
-                            <span style={{ color: '#FFFFFF' }}>查看</span>
+                            <span style={{ color: '#FFFFFF' }}>{messageInfo.btnName || '查看'}</span>
                         </Button>,
                         <IconButton
                             key="close"

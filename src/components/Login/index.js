@@ -94,6 +94,24 @@ class Login extends Component {
                     })
                 }, 300);
             } else {
+                emit('login', { name: 'test', password: '123456' }).then((res) => {
+                    if (res.success) {
+                        dispatch(signIn(res.data))
+                        setTimeout(() => {
+                            this.setState({
+                                loading: false,
+                            }, () => {
+                                this.props.history.replace('/');
+                            })
+                        }, 300);
+                    } else {
+                        this.setState({
+                            noticeOpen: true,
+                            loading: false,
+                            noticeContent: res.msg,
+                        })
+                    }
+                });
                 this.setState({
                     noticeOpen: true,
                     loading: false,
