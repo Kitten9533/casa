@@ -16,6 +16,15 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router'
 
+const msgContent = {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    display: 'inline-block',
+    width: '200px',
+    cursor: 'pointer',
+}
+
 const styles = theme => ({
     close: {
         padding: theme.spacing.unit / 2,
@@ -95,13 +104,6 @@ MySnackbarContent.propTypes = {
 
 const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 
-const styles2 = theme => ({
-    margin: {
-        margin: theme.spacing.unit,
-    },
-});
-
-
 class ConsecutiveSnackbars extends React.Component {
 
     queue = [];
@@ -111,13 +113,13 @@ class ConsecutiveSnackbars extends React.Component {
         messageInfo: {},
     };
 
-    static propTypes = {
-        queue: PropTypes.array,
-    }
+    // static propTypes = {
+    //     queue: PropTypes.array,
+    // }
 
-    static defaultProps = {
-        queue: [],
-    }
+    // static defaultProps = {
+    //     queue: [],
+    // }
 
     // processQueue = () => {
 
@@ -133,6 +135,7 @@ class ConsecutiveSnackbars extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         this.queue = nextProps.queue;
+        console.log(nextProps);
         if (this.state.open) {
             // immediately begin dismissing current message
             // to start showing new one
@@ -166,6 +169,14 @@ class ConsecutiveSnackbars extends React.Component {
         }
     };
 
+    handleShow = (toUrl) => {
+        const {history} = this.props;
+        if(!!toUrl){
+            history.push(toUrl);
+        }
+        this.setState({ open: false });
+    }
+
     handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -182,59 +193,40 @@ class ConsecutiveSnackbars extends React.Component {
         const { messageInfo } = this.state;
 
         return (
-            <div>
-                {/* <Button onClick={this.handleClick('message a')}>Show message A</Button> */}
-                {/* <Button onClick={this.handleClick('message b')}>Show message B</Button> */}
-                <Snackbar
-                    key={messageInfo.key}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    open={this.state.open}
-                    autoHideDuration={6000}
+            <Snackbar
+                key={messageInfo.key}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={this.state.open}
+                autoHideDuration={1000000}
+                onClose={this.handleClose}
+                onExited={this.handleExited}
+                ContentProps={{
+                    'aria-describedby': 'message-id',
+                }}
+            >
+                <MySnackbarContentWrapper
                     onClose={this.handleClose}
-                    onExited={this.handleExited}
-                    ContentProps={{
-                        'aria-describedby': 'message-id',
-                    }}
-                // message={<span id="message-id">{messageInfo.message}</span>}
-                // action={[
-                //     <Button key="undo" color="secondary" size="small" onClick={this.handleClose}>
-                //         UNDO
-                //     </Button>,
-                //     <IconButton
-                //         key="close"
-                //         aria-label="Close"
-                //         color="inherit"
-                //         className={classes.close}
-                //         onClick={this.handleClose}
-                //     >
-                //         <CloseIcon />
-                //     </IconButton>,
-                // ]}
-                >
-                    <MySnackbarContentWrapper
-                        onClose={this.handleClose}
-                        variant="info"
-                        message={<span id="message-id">{messageInfo.message}</span>}
-                        action={[
-                            <Button key="undo" color="primary" size="small" onClick={this.handleClose}>
-                                UNDO
+                    variant="info"
+                    message={<div id="message-id" onClick={() => this.handleShow(messageInfo.toUrl)} style={msgContent}>{messageInfo.message}</div>}
+                    action={[
+                        <Button key="show" color="primary" size="small" onClick={() => this.handleShow(messageInfo.toUrl)}>
+                            <span style={{ color: '#FFFFFF' }}>查看</span>
                         </Button>,
-                            <IconButton
-                                key="close"
-                                aria-label="Close"
-                                color="inherit"
-                                className={classes.close}
-                                onClick={this.handleClose}
-                            >
-                                <CloseIcon />
-                            </IconButton>,
-                        ]}
-                    />
-                </Snackbar>
-            </div>
+                        <IconButton
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            className={classes.close}
+                            onClick={this.handleClose}
+                        >
+                            <CloseIcon />
+                        </IconButton>,
+                    ]}
+                />
+            </Snackbar>
         );
     }
 }

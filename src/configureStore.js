@@ -11,7 +11,7 @@ export default function configureStore(preloadedState){
         rootReducer, 
         composeEnhancer(applyMiddleware(
           thunkMiddleware,
-          loggerMiddleware
+        //   loggerMiddleware
         ))
     )
 

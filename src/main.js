@@ -7,7 +7,7 @@ import App from './App'
 import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
-import { getUserListStart, receiveMessageFromOne } from '@/actions'
+import { getUserListStart, receiveMessageFromOne, addSnackbar } from '@/actions'
 import { SnackbarProvider } from 'notistack';
 import Button from '@material-ui/core/Button';
 
@@ -30,6 +30,11 @@ function addSocketEvents() {
     socket.on('receiveMessageFromOne', (msg) => {
       console.log(msg);
       store.dispatch(receiveMessageFromOne(msg));
+      store.dispatch(addSnackbar({
+        message: `${msg.sender}: ${msg.content}`,
+        toUrl: `/layout/chat/single/${msg.senderId}`,
+        key: new Date().getTime(),
+      }));
     })
 
     // socket.emit('login', { name: 'Kitten', password: '123456' }, (res) => {
@@ -64,7 +69,7 @@ const renderApp = () => {
         maxSnack={3}
         onClickAction={() => alert('Clicked on my action button.')}
       > */}
-        <App />
+      <App />
       {/* </SnackbarProvider> */}
     </Provider>,
     document.getElementById('root')

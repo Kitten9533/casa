@@ -20,7 +20,7 @@ class App extends Component {
         return (
             <Router>
                 <MuiThemeProvider theme={themeTwo}>
-                    <div>
+                    <div style={{width: '100%', 'height': '100%'}}>
                         <ConsecutiveSnackbars queue={queue} />
                         <Switch>
                             <Route exact path="/" render={

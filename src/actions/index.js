@@ -77,19 +77,6 @@ export const receiveMessageFromOne = (msg) => {
   }
 }
 
-// export const enqueueSnackbar = notification => ({
-//   type: 'ENQUEUE_SNACKBAR',
-//   notification: {
-//     key: new Date().getTime() + Math.random(),
-//     ...notification,
-//   },
-// });
-
-// export const removeSnackbar = key => ({
-//   type: 'REMOVE_SNACKBAR',
-//   key,
-// });
-
 export const addSnackbar = (queue) => ({
   type: 'ADD_SNACKBAR',
   queue,

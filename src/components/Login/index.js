@@ -83,20 +83,6 @@ class Login extends Component {
         // return;
         const { dispatch } = this.props;
 
-        // dispatch(enqueueSnackbar({
-        //     message: 'Failed fetching data.',
-        //     options: {
-        //         autoHideDuration: 1000000,
-        //     },
-        // }));
-        setInterval(() => {
-            dispatch(addSnackbar({
-                message: '消息1' + Date.now(),
-                key: new Date().getTime(),
-            }));
-        }, 2000);
-
-
         emit('login', { name: 'Kitten', password: '123456' }).then((res) => {
             if (res.success) {
                 dispatch(signIn(res.data))
