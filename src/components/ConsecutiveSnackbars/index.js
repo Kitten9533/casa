@@ -114,7 +114,7 @@ class ConsecutiveSnackbars extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.queue !== this.queue){
+        if (nextProps.queue !== this.queue) {
             this.queue = nextProps.queue;
             if (this.state.open) {
                 // immediately begin dismissing current message
@@ -135,8 +135,10 @@ class ConsecutiveSnackbars extends React.Component {
         }
     };
 
-    handleShow = (toUrl) => {
+    handleShow = (msg) => {
+        let { toUrl, cb } = msg;
         const { history } = this.props;
+        cb && cb();
         if (!!toUrl) {
             history.push(toUrl);
         }
@@ -162,8 +164,8 @@ class ConsecutiveSnackbars extends React.Component {
             <Snackbar
                 key={messageInfo.key}
                 anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
+                    vertical: 'top',
+                    horizontal: 'right',
                 }}
                 open={this.state.open}
                 autoHideDuration={4000}
@@ -176,9 +178,9 @@ class ConsecutiveSnackbars extends React.Component {
                 <MySnackbarContentWrapper
                     onClose={this.handleClose}
                     variant={messageInfo.variant || ''}
-                    message={<div id="message-id" onClick={() => this.handleShow(messageInfo.toUrl)} style={msgContent}>{messageInfo.message}</div>}
+                    message={<div id="message-id" onClick={() => this.handleShow(messageInfo)} style={msgContent}>{messageInfo.message}</div>}
                     action={[
-                        <Button key="show" color="primary" size="small" onClick={() => this.handleShow(messageInfo.toUrl)}>
+                        <Button key="show" color="primary" size="small" onClick={() => this.handleShow(messageInfo)}>
                             <span style={{ color: '#FFFFFF' }}>{messageInfo.btnName || '查看'}</span>
                         </Button>,
                         <IconButton

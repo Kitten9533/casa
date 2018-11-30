@@ -7,7 +7,7 @@ import App from './App'
 import './main.css'
 import configureStore from './configureStore'
 import socket from '@/utils/socket'
-import { getUserListStart, receiveMessageFromOne, addSnackbar } from '@/actions'
+import { getUserListStart, receiveMessageFromOne, addSnackbar, sendMsgToContact } from '@/actions'
 import { SnackbarProvider } from 'notistack';
 import Button from '@material-ui/core/Button';
 
@@ -45,6 +45,9 @@ function addSocketEvents() {
         message: msg.content,
         toUrl: msg.toUrl,
         btnName: '聊天',
+        cb: () => {
+          store.dispatch(sendMsgToContact(msg.userInfo));
+        },
         variant: '',
         key: new Date().getTime(),
       }));

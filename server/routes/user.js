@@ -105,6 +105,7 @@ const user = {
         socket.broadcast.emit('receiveMessageFromSystem', {
             content: `系统消息: 新用户 ${res.name} 上线啦`,
             toUrl: `/layout/chat/single/${res._id}`,
+            userInfo: res,
         });
 
         return {
@@ -155,6 +156,7 @@ const user = {
         socket.broadcast.emit('receiveMessageFromSystem', {
             content: `系统消息: 用户 ${res.name} 上线啦`,
             toUrl: `/layout/chat/single/${res._id}`,
+            userInfo: res,
         });
 
         return {

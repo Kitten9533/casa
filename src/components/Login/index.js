@@ -229,8 +229,8 @@ class Login extends Component {
                     <Avatar className={classes.avatar}>
                         <LockIcon />
                     </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign in
+                    <Typography component="h3" variant="h5">
+                        Sign in / Sign up
                     </Typography>
                     <form className={classes.form}>
                         <FormControl margin="normal" required fullWidth>
@@ -250,7 +250,7 @@ class Login extends Component {
                             disabled={loading}
                             onClick={this.handleSubmit}
                         >
-                            Sign in
+                            Sign in / Sign up
                         </Button>
                         {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
                     </form>
